@@ -38,17 +38,16 @@ function activerRecherchePrincipale() {
 
     champ.addEventListener('input', () => {
         const texte = champ.value.trim();
+        cacherMessage(); // on repart toujours d'un etat sans message
 
         // la recherche se lance seulement a partir de 3 caracteres
         if (texte.length >= 3) {
             const resultats = rechercherPrincipal(recipes, texte);
             afficherRecettes(resultats);
 
-            // si rien ne correspond, on affiche un message, sinon on le cache
+            // on affiche le message seulement si vraiment rien ne correspond
             if (resultats.length === 0) {
                 afficherMessageAucun(texte);
-            } else {
-                cacherMessage();
             }
         } else {
             // en dessous de 3 caracteres on remontre toutes les recettes
@@ -59,6 +58,7 @@ function activerRecherchePrincipale() {
     // la croix vide le champ et remontre toutes les recettes
     boutonClear.addEventListener('click', () => {
         champ.value = '';
+        cacherMessage();
         afficherRecettes(recipes);
     });
 
