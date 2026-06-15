@@ -149,6 +149,34 @@ body {
     font-size: 21px;
 }
 
+/* ---------- Tags des filtres selectionnes ---------- */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding-bottom: 20px;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 16px 18px;
+    background-color: var(--jaune);
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.tag__remove {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--noir);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+}
+
 /* ---------- Menu deroulant (balise native <details>, donc pas de JS) ---------- */
 .dropdown {
     position: relative;

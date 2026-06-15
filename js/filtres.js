@@ -33,6 +33,7 @@ function configurerMenu(idListe, mots) {
     const boutonClear = dropdown.querySelector('.dropdown__clear');
 
     const selection = []; // les mots choisis, dans l'ordre du clic
+    const tagsAffiches = {}; // pour retrouver le tag d'un mot et pouvoir l'enlever
 
     // cree un <li> pour un mot (selectionne = jaune + gras + une croix pour le retirer)
     function creerItem(mot, estChoisi) {
@@ -71,6 +72,8 @@ function configurerMenu(idListe, mots) {
     function ajouter(mot) {
         if (!selection.includes(mot)) {
             selection.push(mot);
+            // on cree aussi le tag jaune sous la barre de recherche
+            tagsAffiches[mot] = creerTag(mot, () => retirer(mot));
         }
         afficher();
     }
@@ -79,6 +82,11 @@ function configurerMenu(idListe, mots) {
         const i = selection.indexOf(mot);
         if (i !== -1) {
             selection.splice(i, 1);
+        }
+        // on enleve le tag correspondant
+        if (tagsAffiches[mot]) {
+            tagsAffiches[mot].remove();
+            delete tagsAffiches[mot];
         }
         afficher();
     }
