@@ -379,3 +379,69 @@ body {
     color: var(--gris);
     font-size: 14px;
 }
+
+/* ---------- Responsive ---------- */
+
+/* tablette : on passe la grille de recettes sur 2 colonnes */
+@media (max-width: 1024px) {
+    .recettes {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+}
+
+/* tablette : on retrecit un peu les 3 menus pour qu'ils tiennent sur une seule ligne */
+@media (max-width: 900px) {
+    .dropdown {
+        width: 190px;
+    }
+
+    .filters__dropdowns {
+        gap: 14px;
+    }
+}
+
+/* petits ecrans : on reduit le header et on empile les filtres les uns sous les autres */
+@media (max-width: 767px) {
+    .header {
+        padding: 25px 20px 40px;
+    }
+
+    .header__hero {
+        padding-top: 40px;
+    }
+
+    .header__title {
+        font-size: 28px;
+    }
+
+    /* les filtres passent en colonne et prennent toute la largeur */
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .filters__dropdowns {
+        flex-direction: column;
+    }
+
+    .dropdown {
+        width: 100%;
+    }
+
+    .filters__count {
+        margin-left: 0;
+    }
+}
+
+/* mobile : une seule colonne et un peu moins de marge sur les cotes */
+@media (max-width: 640px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .recettes {
+        grid-template-columns: 1fr;
+    }
+}
