@@ -25,6 +25,11 @@ function afficherMessageAucun(texte) {
     message.hidden = false;
 }
 
+// Cache le message.
+function cacherMessage() {
+    document.getElementById('aucun-resultat').hidden = true;
+}
+
 // Branche la barre de recherche du header.
 function activerRecherchePrincipale() {
     const form = document.querySelector('.search');
@@ -39,9 +44,11 @@ function activerRecherchePrincipale() {
             const resultats = rechercherPrincipal(recipes, texte);
             afficherRecettes(resultats);
 
-            // si rien ne correspond, on affiche un message
+            // si rien ne correspond, on affiche un message, sinon on le cache
             if (resultats.length === 0) {
                 afficherMessageAucun(texte);
+            } else {
+                cacherMessage();
             }
         } else {
             // en dessous de 3 caracteres on remontre toutes les recettes
