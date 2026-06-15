@@ -26,3 +26,16 @@ function couper(texte, max) {
     }
     return texte.slice(0, max).trim() + '…';
 }
+
+// cree un element avec une classe et (si fourni) du texte.
+// Le texte passe par textContent : aucune balise HTML ne peut etre injectee.
+function creerElement(balise, classe, texte) {
+    const element = document.createElement(balise);
+    if (classe) {
+        element.className = classe;
+    }
+    if (texte !== undefined) {
+        element.textContent = texte;
+    }
+    return element;
+}

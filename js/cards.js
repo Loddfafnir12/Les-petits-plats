@@ -1,37 +1,51 @@
 // Tout le JavaScript lie aux cartes de recettes.
-// "recipes" vient de recipes.js ; "couper" vient de utils.js.
+// "recipes" vient de recipes.js ; "couper" et "creerElement" viennent de utils.js.
 
-// transforme la liste d'ingredients d'une recette en HTML (nom + quantite)
-function ingredientsEnHtml(ingredients) {
-    return ingredients.map(item => {
+// cree la liste des ingredients d'une recette (nom + quantite), sur 2 colonnes
+function creerListeIngredients(ingredients) {
+    const ul = creerElement('ul', 'card__ingredients');
+
+    ingredients.forEach(item => {
+        const li = document.createElement('li');
+        li.appendChild(creerElement('span', 'card__ing-name', item.ingredient));
+
         // on colle la quantite et l'unite si elles existent
         let quantite = '';
         if (item.quantity) {
             quantite = item.quantity + (item.unit ? ' ' + item.unit : '');
         }
-        return `<li>
-                    <span class="card__ing-name">${item.ingredient}</span>
-                    <span class="card__ing-qty">${quantite}</span>
-                </li>`;
-    }).join('');
+        li.appendChild(creerElement('span', 'card__ing-qty', quantite));
+
+        ul.appendChild(li);
+    });
+
+    return ul;
 }
 
-// cree la carte (un <article>) d'une recette
+// cree la carte (un <article>) d'une recette.
+// Tout est insere via textContent / des proprietes : aucune balise HTML ne peut etre injectee.
 function creerCarte(recette) {
-    const article = document.createElement('article');
-    article.className = 'card';
-    article.innerHTML = `
-        <div class="card__image">
-            <img class="card__photo" src="JSON%20recipes/${recette.image}" alt="${recette.name}" loading="lazy">
-            <span class="card__time">${recette.time}min</span>
-        </div>
-        <div class="card__body">
-            <h2 class="card__title">${recette.name}</h2>
-            <p class="card__label">Recette</p>
-            <p class="card__description">${couper(recette.description, 200)}</p>
-            <p class="card__label">Ingrédients</p>
-            <ul class="card__ingredients">${ingredientsEnHtml(recette.ingredients)}</ul>
-        </div>`;
+    const article = creerElement('article', 'card');
+
+    // zone de l'image + badge du temps
+    const zoneImage = creerElement('div', 'card__image');
+    const photo = creerElement('img', 'card__photo');
+    photo.src = 'JSON%20recipes/' + recette.image;
+    photo.alt = recette.name;
+    photo.loading = 'lazy';
+    zoneImage.appendChild(photo);
+    zoneImage.appendChild(creerElement('span', 'card__time', recette.time + 'min'));
+    article.appendChild(zoneImage);
+
+    // corps de la carte
+    const corps = creerElement('div', 'card__body');
+    corps.appendChild(creerElement('h2', 'card__title', recette.name));
+    corps.appendChild(creerElement('p', 'card__label', 'Recette'));
+    corps.appendChild(creerElement('p', 'card__description', couper(recette.description, 200)));
+    corps.appendChild(creerElement('p', 'card__label', 'Ingrédients'));
+    corps.appendChild(creerListeIngredients(recette.ingredients));
+    article.appendChild(corps);
+
     return article;
 }
 
