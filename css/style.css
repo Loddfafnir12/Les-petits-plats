@@ -267,10 +267,15 @@ body {
     display: flex;
 }
 
-/* loupe fine grise (Group 4.svg) */
+/* loupe fine grise (Group 4.svg), devenue un bouton cliquable */
 .dropdown__loupe {
+    display: flex;
     flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: none;
     color: #7A7A7A;
+    cursor: pointer;
 }
 
 /* la liste des options : on peut scroller mais la barre est cachee */
