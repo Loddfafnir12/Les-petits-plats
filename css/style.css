@@ -80,6 +80,31 @@ body {
     color: #b0b0b0;
 }
 
+/* petit lisere quand la barre est selectionnee */
+.search:focus-within {
+    box-shadow: 0 0 0 2px var(--jaune);
+}
+
+/* la croix pour effacer : cachee par defaut */
+.search__clear {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+    border: none;
+    background: none;
+    color: var(--noir);
+    cursor: pointer;
+}
+
+/* on l'affiche seulement quand le champ contient du texte
+   (placeholder-shown = champ vide, donc :not(...) = champ rempli) */
+.search__input:not(:placeholder-shown) ~ .search__clear {
+    display: flex;
+}
+
 .search__btn {
     display: flex;
     align-items: center;
@@ -91,4 +116,10 @@ body {
     background-color: var(--noir);
     color: var(--blanc);
     cursor: pointer;
+}
+
+/* au survol le bouton passe en jaune (comme dans Loop CTA.png) */
+.search__btn:hover {
+    background-color: var(--jaune);
+    color: var(--noir);
 }
