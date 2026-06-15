@@ -2,19 +2,38 @@
 // Toute la logique de recherche est dans rechercherPrincipal() : c'est la SEULE fonction
 // qui changera entre la branche "boucles" et la branche "fonctionnel".
 
-// Version programmation fonctionnelle (filter / some / includes).
+// Version boucles natives (for).
 // Renvoie les recettes qui contiennent le texte cherche.
 function rechercherPrincipal(recettes, texte) {
     const recherche = texte.toLowerCase();
+    const resultats = [];
 
-    return recettes.filter(recette => {
-        const dansTitre = recette.name.toLowerCase().includes(recherche);
-        const dansDescription = recette.description.toLowerCase().includes(recherche);
-        const dansIngredients = recette.ingredients.some(item =>
-            item.ingredient.toLowerCase().includes(recherche)
-        );
-        return dansTitre || dansDescription || dansIngredients;
-    });
+    for (let i = 0; i < recettes.length; i++) {
+        const recette = recettes[i];
+        let trouve = false;
+
+        // dans le titre ou la description
+        if (recette.name.toLowerCase().includes(recherche)
+            || recette.description.toLowerCase().includes(recherche)) {
+            trouve = true;
+        }
+
+        // sinon, dans la liste des ingredients
+        if (!trouve) {
+            for (let j = 0; j < recette.ingredients.length; j++) {
+                if (recette.ingredients[j].ingredient.toLowerCase().includes(recherche)) {
+                    trouve = true;
+                    break;
+                }
+            }
+        }
+
+        if (trouve) {
+            resultats.push(recette);
+        }
+    }
+
+    return resultats;
 }
 
 // Etat courant de la recherche : le texte tape + les tags choisis dans chaque menu.
