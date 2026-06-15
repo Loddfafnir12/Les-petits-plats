@@ -290,3 +290,92 @@ body {
     line-height: 1;
     cursor: pointer;
 }
+
+/* ---------- Grille des recettes ---------- */
+.recettes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    padding-bottom: 60px;
+}
+
+/* ---------- Carte d'une recette ---------- */
+.card {
+    height: 731px;
+    overflow: hidden;
+    background-color: var(--blanc);
+    border-radius: 21px;
+    box-shadow: 0 4px 34px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* zone de l'image (le gris sert de fond le temps que la photo charge) */
+.card__image {
+    position: relative;
+    height: 253px;
+    background-color: #e5e5e5;
+}
+
+/* la photo de la recette remplit la zone sans se deformer */
+.card__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* badge du temps de preparation, en haut a droite */
+.card__time {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 15px;
+    background-color: var(--jaune);
+    border-radius: 14px;
+    font-size: 12px;
+}
+
+.card__body {
+    padding: 25px;
+}
+
+.card__title {
+    margin-bottom: 18px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* les petits intitules gris "RECETTE" et "INGREDIENTS" */
+.card__label {
+    margin-bottom: 10px;
+    color: var(--gris);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.card__description {
+    margin-bottom: 20px;
+    color: #565656;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* la liste des ingredients sur 2 colonnes */
+.card__ingredients {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    list-style: none;
+}
+
+.card__ing-name {
+    display: block;
+    font-size: 14px;
+}
+
+.card__ing-qty {
+    display: block;
+    color: var(--gris);
+    font-size: 14px;
+}

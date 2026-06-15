@@ -18,3 +18,11 @@ function nettoyer(liste) {
     });
     return resultat.sort((a, b) => a.localeCompare(b));
 }
+
+// coupe un texte trop long et ajoute des points de suspension
+function couper(texte, max) {
+    if (texte.length <= max) {
+        return texte;
+    }
+    return texte.slice(0, max).trim() + '…';
+}
