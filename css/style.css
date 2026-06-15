@@ -286,5 +286,7 @@ body {
     border-radius: 50%;
     background-color: var(--noir);
     color: var(--blanc);
+    font-size: 13px;
+    line-height: 1;
     cursor: pointer;
 }
