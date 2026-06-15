@@ -123,3 +123,168 @@ body {
     background-color: var(--jaune);
     color: var(--noir);
 }
+
+/* ---------- Contenu principal ---------- */
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+/* ---------- Barre de filtres ---------- */
+.filters {
+    display: flex;
+    align-items: center;
+    padding: 30px 0;
+}
+
+.filters__dropdowns {
+    display: flex;
+    gap: 20px;
+}
+
+.filters__count {
+    margin-left: auto;
+    font-family: 'Anton', sans-serif;
+    font-size: 21px;
+}
+
+/* ---------- Menu deroulant (balise native <details>, donc pas de JS) ---------- */
+.dropdown {
+    position: relative;
+    width: 220px;
+}
+
+/* le bouton du menu */
+.dropdown__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background-color: var(--blanc);
+    border-radius: 11px;
+    font-size: 18px;
+    cursor: pointer;
+    list-style: none; /* enleve la petite fleche par defaut de <summary> */
+}
+
+/* quand le menu est ouvert, on arrondit seulement les coins du haut */
+.dropdown[open] .dropdown__summary {
+    border-radius: 11px 11px 0 0;
+}
+
+/* la fleche pointe vers le bas, et se retourne quand c'est ouvert */
+.dropdown__chevron {
+    transition: transform 0.2s;
+}
+
+.dropdown[open] .dropdown__chevron {
+    transform: rotate(180deg);
+}
+
+/* le panneau qui s'ouvre sous le bouton, par dessus le reste de la page.
+   cache par defaut, on l'affiche seulement quand <details> a l'attribut "open" */
+.dropdown__panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 14px 0 8px; /* pas de padding gauche/droite : le survol des items va bord a bord */
+    background-color: var(--blanc);
+    border-radius: 0 0 11px 11px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* les coins arrondis coupent proprement le fond jaune */
+    z-index: 10;
+}
+
+.dropdown[open] .dropdown__panel {
+    display: block;
+}
+
+/* la petite recherche a l'interieur du menu (inset, pour laisser les items aller bord a bord) */
+.dropdown__search {
+    display: flex;
+    align-items: center;
+    margin: 0 16px 14px;
+    padding: 8px 12px;
+    border: 1px solid #c6c6c6;
+    border-radius: 2px;
+}
+
+.dropdown__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+}
+
+/* croix pour vider la recherche du menu : cachee tant que le champ est vide */
+.dropdown__clear {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #7A7A7A;
+    cursor: pointer;
+}
+
+/* on l'affiche seulement quand le champ contient du texte */
+.dropdown__input:not(:placeholder-shown) ~ .dropdown__clear {
+    display: flex;
+}
+
+/* loupe fine grise (Group 4.svg) */
+.dropdown__loupe {
+    flex-shrink: 0;
+    color: #7A7A7A;
+}
+
+/* la liste des options : on peut scroller mais la barre est cachee */
+.dropdown__list {
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    scrollbar-width: none; /* cache la barre de defilement */
+}
+
+.dropdown__list li {
+    padding: 9px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* survol d'une option : fond jaune sur toute la largeur du menu */
+.dropdown__list li:hover {
+    background-color: var(--jaune);
+}
+
+/* option choisie : on garde le jaune, le texte passe en gras + une croix pour la retirer (cf li-item.png) */
+.dropdown__list li.is-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--jaune);
+    font-weight: 700;
+}
+
+/* petit rond noir avec une croix blanche */
+.dropdown__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 17px;
+    height: 17px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--noir);
+    color: var(--blanc);
+    cursor: pointer;
+}
