@@ -4,9 +4,9 @@
 afficherRecettes(recipes);
 
 // remplit les trois menus de filtres avec les donnees des recettes
-configurerMenu('list-ingredients', nettoyer(tousLesIngredients()), 'ingredients');
-configurerMenu('list-appliances', nettoyer(tousLesAppareils()), 'appareils');
-configurerMenu('list-ustensils', nettoyer(tousLesUstensiles()), 'ustensiles');
+configurerMenu('list-ingredients', nettoyer(ingredientsDe(recipes)), 'ingredients');
+configurerMenu('list-appliances', nettoyer(appareilsDe(recipes)), 'appareils');
+configurerMenu('list-ustensils', nettoyer(ustensilesDe(recipes)), 'ustensiles');
 
 // un seul menu ouvert a la fois
 activerUnSeulMenuOuvert();

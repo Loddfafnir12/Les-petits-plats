@@ -67,6 +67,9 @@ function appliquerFiltres() {
 
     afficherRecettes(resultats);
 
+    // les menus ne proposent que les elements des recettes affichees
+    mettreAJourMenus(recipes);
+
     if (resultats.length === 0) {
         afficherMessageAucun(etatRecherche.texte);
     }

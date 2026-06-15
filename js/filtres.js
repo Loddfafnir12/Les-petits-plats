@@ -1,27 +1,43 @@
 // Tout le JavaScript lie aux menus de filtres (Ingredients / Appareils / Ustensiles).
 // "recipes" vient de recipes.js ; "majuscule" et "nettoyer" viennent de utils.js.
 
-// recupere tous les ingredients de toutes les recettes
-function tousLesIngredients() {
+// recupere les ingredients d'une liste de recettes
+function ingredientsDe(recettes) {
     const liste = [];
-    recipes.forEach(recette => {
+    recettes.forEach(recette => {
         recette.ingredients.forEach(item => liste.push(item.ingredient));
     });
     return liste;
 }
 
-// recupere tous les appareils
-function tousLesAppareils() {
-    return recipes.map(recette => recette.appliance);
+// recupere les appareils d'une liste de recettes
+function appareilsDe(recettes) {
+    return recettes.map(recette => recette.appliance);
 }
 
-// recupere tous les ustensiles
-function tousLesUstensiles() {
+// recupere les ustensiles d'une liste de recettes
+function ustensilesDe(recettes) {
     const liste = [];
-    recipes.forEach(recette => {
+    recettes.forEach(recette => {
         recette.ustensils.forEach(ustensile => liste.push(ustensile));
     });
     return liste;
+}
+
+// Liste des menus configures, pour pouvoir mettre a jour leurs listes apres un filtrage.
+const menusConfigures = [];
+
+// Met a jour les 3 menus : ils ne proposent que les elements presents dans les recettes donnees.
+function mettreAJourMenus(recettes) {
+    menusConfigures.forEach(menu => {
+        if (menu.type === 'ingredients') {
+            menu.mettreAJour(nettoyer(ingredientsDe(recettes)));
+        } else if (menu.type === 'appareils') {
+            menu.mettreAJour(nettoyer(appareilsDe(recettes)));
+        } else {
+            menu.mettreAJour(nettoyer(ustensilesDe(recettes)));
+        }
+    });
 }
 
 // Configure un menu : affiche les mots, gere la selection au clic et le filtrage par texte.
@@ -34,6 +50,7 @@ function configurerMenu(idListe, mots, type) {
 
     const selection = []; // les mots choisis, dans l'ordre du clic
     const tagsAffiches = {}; // pour retrouver le tag d'un mot et pouvoir l'enlever
+    let motsDisponibles = mots; // la liste affichee (se reduit apres un filtrage)
 
     // cree un <li> pour un mot (selectionne = jaune + gras + une croix pour le retirer)
     function creerItem(mot, estChoisi) {
@@ -62,7 +79,7 @@ function configurerMenu(idListe, mots, type) {
 
         selection.forEach(mot => ul.appendChild(creerItem(mot, true)));
 
-        mots.forEach(mot => {
+        motsDisponibles.forEach(mot => {
             if (!selection.includes(mot) && mot.toLowerCase().includes(recherche)) {
                 ul.appendChild(creerItem(mot, false));
             }
@@ -110,6 +127,15 @@ function configurerMenu(idListe, mots, type) {
 
     // on empeche le rechargement de la page si on appuie sur Entree dans le champ
     form.addEventListener('submit', event => event.preventDefault());
+
+    // on enregistre ce menu pour pouvoir mettre a jour sa liste apres un filtrage
+    menusConfigures.push({
+        type: type,
+        mettreAJour: function (nouveauxMots) {
+            motsDisponibles = nouveauxMots;
+            afficher();
+        }
+    });
 
     afficher(); // premier affichage
 }
