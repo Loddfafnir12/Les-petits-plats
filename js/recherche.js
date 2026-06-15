@@ -47,7 +47,7 @@ function filtrerParTags(recettes) {
         return recettes;
     }
     return recettes.filter(recette =>
-        tags.some(tag => recetteContientTag(recette, tag))
+        tags.every(tag => recetteContientTag(recette, tag))
     );
 }
 
