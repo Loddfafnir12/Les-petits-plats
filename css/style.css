@@ -380,6 +380,12 @@ body {
     font-size: 14px;
 }
 
+/* message quand aucune recette ne correspond a la recherche */
+.aucun-resultat {
+    padding: 40px 0;
+    font-size: 18px;
+}
+
 /* ---------- Responsive ---------- */
 
 /* tablette : on passe la grille de recettes sur 2 colonnes */

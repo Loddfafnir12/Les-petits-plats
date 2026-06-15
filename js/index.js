@@ -10,3 +10,6 @@ configurerMenu('list-ustensils', nettoyer(tousLesUstensiles()));
 
 // un seul menu ouvert a la fois
 activerUnSeulMenuOuvert();
+
+// la barre de recherche principale du header
+activerRecherchePrincipale();
