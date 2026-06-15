@@ -116,6 +116,20 @@ function configurerMenu(idListe, mots, type) {
         afficher();
     }
 
+    // Entree ou clic sur la loupe : on choisit le 1er mot-cle de la liste qui correspond a la frappe
+    function choisirPremier() {
+        const recherche = champ.value.toLowerCase().trim();
+        if (recherche === '') {
+            return;
+        }
+        const premier = motsDisponibles.find(mot =>
+            !selection.includes(mot) && mot.toLowerCase().includes(recherche)
+        );
+        if (premier) {
+            ajouter(premier);
+        }
+    }
+
     // on filtre la liste a chaque lettre tapee
     champ.addEventListener('input', afficher);
 
@@ -125,8 +139,11 @@ function configurerMenu(idListe, mots, type) {
         afficher();
     });
 
-    // on empeche le rechargement de la page si on appuie sur Entree dans le champ
-    form.addEventListener('submit', event => event.preventDefault());
+    // Entree dans le champ ou clic sur la loupe : on ajoute le 1er mot-cle qui correspond
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        choisirPremier();
+    });
 
     // on enregistre ce menu pour pouvoir mettre a jour sa liste apres un filtrage
     menusConfigures.push({
