@@ -1,0 +1,94 @@
+/* Couleurs du projet */
+:root {
+    --jaune: #FFD15B;
+    --fond: #EDEDED;
+    --blanc: #FFFFFF;
+    --noir: #1B1B1B;
+    --gris: #7A7A7A;
+}
+
+/* petit reset de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Manrope', Arial, sans-serif;
+    background-color: var(--fond);
+    color: var(--noir);
+}
+
+/* ---------- En-tete ---------- */
+.header {
+    /* la photo de fond avec un voile sombre par dessus pour bien lire le texte */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("../src/Header.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 35px 50px 60px;
+}
+
+.header__logo {
+    height: 24px;
+    width: auto;
+}
+
+.header__hero {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-top: 75px;
+    text-align: center;
+}
+
+.header__title {
+    max-width: 850px;
+    margin: 0 auto;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--jaune);
+}
+
+/* ---------- Barre de recherche ---------- */
+.search {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 954px;
+    height: 72px;
+    margin: 35px auto 0;
+    padding-left: 25px;
+    padding-right: 8px;
+    background-color: var(--blanc);
+    border-radius: 12px;
+}
+
+.search__input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    color: var(--noir);
+}
+
+.search__input::placeholder {
+    color: #b0b0b0;
+}
+
+.search__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--noir);
+    color: var(--blanc);
+    cursor: pointer;
+}
