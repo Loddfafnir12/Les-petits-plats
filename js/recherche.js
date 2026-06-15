@@ -17,6 +17,61 @@ function rechercherPrincipal(recettes, texte) {
     });
 }
 
+// Etat courant de la recherche : le texte tape + les tags choisis dans chaque menu.
+const etatRecherche = {
+    texte: '',
+    ingredients: [],
+    appareils: [],
+    ustensiles: []
+};
+
+// Renvoie true si la recette contient le mot-cle (dans ses ingredients, son appareil ou ses ustensiles).
+function recetteContientTag(recette, tag) {
+    const t = tag.toLowerCase();
+    return recette.ingredients.some(item => item.ingredient.toLowerCase() === t)
+        || recette.appliance.toLowerCase() === t
+        || recette.ustensils.some(u => u.toLowerCase() === t);
+}
+
+// Rassemble tous les tags choisis dans les trois menus.
+function tousLesTagsChoisis() {
+    return etatRecherche.ingredients
+        .concat(etatRecherche.appareils)
+        .concat(etatRecherche.ustensiles);
+}
+
+// Garde les recettes qui correspondent aux tags choisis.
+function filtrerParTags(recettes) {
+    const tags = tousLesTagsChoisis();
+    if (tags.length === 0) {
+        return recettes;
+    }
+    return recettes.filter(recette =>
+        tags.some(tag => recetteContientTag(recette, tag))
+    );
+}
+
+// Applique la recherche principale ET les tags, puis rafraichit l'affichage.
+function appliquerFiltres() {
+    cacherMessage();
+
+    let resultats = recipes;
+
+    // recherche principale : seulement a partir de 3 caracteres
+    if (etatRecherche.texte.length >= 3) {
+        resultats = rechercherPrincipal(resultats, etatRecherche.texte);
+    }
+
+    // filtrage par les tags choisis
+    resultats = filtrerParTags(resultats);
+
+    afficherRecettes(resultats);
+
+    if (resultats.length === 0) {
+        afficherMessageAucun(etatRecherche.texte);
+    }
+}
+
 // Affiche le message "aucune recette" en reprenant le texte cherche.
 function afficherMessageAucun(texte) {
     const message = document.getElementById('aucun-resultat');
@@ -37,29 +92,15 @@ function activerRecherchePrincipale() {
     const boutonClear = document.querySelector('.search__clear');
 
     champ.addEventListener('input', () => {
-        const texte = champ.value.trim();
-        cacherMessage(); // on repart toujours d'un etat sans message
-
-        // la recherche se lance seulement a partir de 3 caracteres
-        if (texte.length >= 3) {
-            const resultats = rechercherPrincipal(recipes, texte);
-            afficherRecettes(resultats);
-
-            // on affiche le message seulement si vraiment rien ne correspond
-            if (resultats.length === 0) {
-                afficherMessageAucun(texte);
-            }
-        } else {
-            // en dessous de 3 caracteres on remontre toutes les recettes
-            afficherRecettes(recipes);
-        }
+        etatRecherche.texte = champ.value.trim();
+        appliquerFiltres();
     });
 
-    // la croix vide le champ et remontre toutes les recettes
+    // la croix vide le champ et relance le filtrage
     boutonClear.addEventListener('click', () => {
         champ.value = '';
-        cacherMessage();
-        afficherRecettes(recipes);
+        etatRecherche.texte = '';
+        appliquerFiltres();
     });
 
     // on empeche le rechargement de la page quand on appuie sur Entree

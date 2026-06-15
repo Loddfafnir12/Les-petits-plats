@@ -25,7 +25,7 @@ function tousLesUstensiles() {
 }
 
 // Configure un menu : affiche les mots, gere la selection au clic et le filtrage par texte.
-function configurerMenu(idListe, mots) {
+function configurerMenu(idListe, mots, type) {
     const ul = document.getElementById(idListe);
     const dropdown = ul.closest('.dropdown');
     const form = dropdown.querySelector('.dropdown__search');
@@ -72,8 +72,10 @@ function configurerMenu(idListe, mots) {
     function ajouter(mot) {
         if (!selection.includes(mot)) {
             selection.push(mot);
+            etatRecherche[type].push(mot); // on memorise le tag pour le filtrage
             // on cree aussi le tag jaune sous la barre de recherche
             tagsAffiches[mot] = creerTag(mot, () => retirer(mot));
+            appliquerFiltres(); // on met a jour les recettes affichees
         }
         afficher();
     }
@@ -83,11 +85,17 @@ function configurerMenu(idListe, mots) {
         if (i !== -1) {
             selection.splice(i, 1);
         }
+        // on enleve le mot de l'etat de recherche
+        const j = etatRecherche[type].indexOf(mot);
+        if (j !== -1) {
+            etatRecherche[type].splice(j, 1);
+        }
         // on enleve le tag correspondant
         if (tagsAffiches[mot]) {
             tagsAffiches[mot].remove();
             delete tagsAffiches[mot];
         }
+        appliquerFiltres();
         afficher();
     }
 
