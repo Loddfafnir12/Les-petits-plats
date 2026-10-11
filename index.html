@@ -2,10 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <!-- viewport : sans cette ligne, le site s'afficherait "dezoome" sur mobile et le responsive ne marcherait pas -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Petits Plats</title>
 
-    <!-- polices de la maquette : Anton pour les titres, Manrope pour le texte -->
+    <!-- polices de la maquette : Anton pour les titres, Manrope pour le texte.
+         preconnect ouvre la connexion aux serveurs Google en avance : la police arrive plus vite -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
@@ -19,15 +21,19 @@
         <img src="src/Logo.png" alt="Les Petits Plats" class="header__logo">
 
         <div class="header__hero">
+            <!-- un seul h1 par page : c'est le titre principal (accessibilite et referencement) -->
             <h1 class="header__title">Cherchez parmi plus de 1500 recettes du quotidien, simples et délicieuses</h1>
 
-            <!-- barre de recherche principale (juste le visuel pour le moment) -->
+            <!-- Barre de recherche principale (js/recherche.js).
+                 role="search" signale la zone de recherche aux lecteurs d'ecran ;
+                 aria-label remplace le label visible que la maquette n'a pas -->
             <form class="search" role="search">
                 <input type="text" class="search__input" placeholder="Rechercher une recette, un ingrédient, ..." aria-label="Rechercher une recette">
 
-                <!-- la croix pour vider le champ : cachee en CSS tant qu'on n'a rien tape.
-                     type="reset" vide le champ tout seul, pas besoin de JS -->
+                <!-- la croix : cachee en CSS tant que le champ est vide.
+                     type="reset" vide le champ, et le JS relance le filtrage -->
                 <button type="reset" class="search__clear" aria-label="Effacer">
+                    <!-- aria-hidden : le dessin est decoratif, le lecteur d'ecran lit l'aria-label du bouton -->
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -35,7 +41,7 @@
                 </button>
 
                 <button type="submit" class="search__btn" aria-label="Rechercher">
-                    <!-- loupe dessinee en SVG, comme ca pas besoin d'image -->
+                    <!-- loupe dessinee en SVG : nette a toutes les tailles, sans fichier image -->
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="10" cy="10" r="7"></circle>
                         <line x1="15" y1="15" x2="21" y2="21"></line>
@@ -52,7 +58,8 @@
             <div class="filters__dropdowns">
 
                 <!-- Menu Ingredients.
-                     J'utilise <details> : ca s'ouvre et se ferme tout seul, sans JS -->
+                     <details> / <summary> : menu deroulant natif, il s'ouvre et se ferme
+                     au clic sans JS ; le navigateur ajoute l'attribut [open] quand il est ouvert -->
                 <details class="dropdown">
                     <summary class="dropdown__summary">
                         Ingrédients
@@ -61,17 +68,19 @@
                         </svg>
                     </summary>
                     <div class="dropdown__panel">
-                        <!-- petite recherche dans le menu. <form> pour que la croix (type reset) vide le champ sans JS -->
+                        <!-- petite recherche du menu : un <form> pour que la croix (reset) et la loupe (submit)
+                             fonctionnent, et pour que la touche Entree declenche l'ajout du mot-cle.
+                             placeholder=" " (un espace) : invisible, mais indispensable a l'astuce CSS
+                             :placeholder-shown qui affiche la croix des qu'on tape -->
                         <form class="dropdown__search">
                             <input type="text" class="dropdown__input" placeholder=" " aria-label="Rechercher un ingrédient">
-                            <!-- croix grise : apparait seulement quand on a tape quelque chose -->
                             <button type="reset" class="dropdown__clear" aria-label="Effacer">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                 </svg>
                             </button>
-                            <!-- loupe reprise du Group 4.svg de la maquette (trait fin, grise) -->
+                            <!-- loupe (Group 4.svg de la maquette) : Entree ou clic = ajoute le 1er mot-cle qui correspond -->
                             <button type="submit" class="dropdown__loupe" aria-label="Ajouter le mot-clé">
                                 <svg width="18" height="18" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                                     <circle cx="5" cy="5" r="4.75" stroke="currentColor" stroke-width="0.5"></circle>
@@ -79,12 +88,12 @@
                                 </svg>
                             </button>
                         </form>
-                        <!-- la liste est remplie depuis recipes.js (voir js/app.js) -->
+                        <!-- liste vide ici : elle est remplie par le JS (configurerMenu dans js/filtres.js) -->
                         <ul class="dropdown__list" id="list-ingredients"></ul>
                     </div>
                 </details>
 
-                <!-- Menu Appareils -->
+                <!-- Menu Appareils : meme structure que le menu Ingredients -->
                 <details class="dropdown">
                     <summary class="dropdown__summary">
                         Appareils
@@ -112,7 +121,7 @@
                     </div>
                 </details>
 
-                <!-- Menu Ustensiles -->
+                <!-- Menu Ustensiles : meme structure que le menu Ingredients -->
                 <details class="dropdown">
                     <summary class="dropdown__summary">
                         Ustensiles
@@ -142,24 +151,26 @@
 
             </div>
 
-            <!-- le nombre est mis a jour par le JS a chaque recherche (js/cards.js) -->
+            <!-- "1500 recettes" est remplace par le vrai nombre des le chargement, puis a chaque recherche (js/cards.js) -->
             <p class="filters__count">1500 recettes</p>
         </div>
 
-        <!-- les tags des filtres selectionnes -->
+        <!-- zone des tags jaunes, remplie par js/tags.js -->
         <div class="tags" id="tags"></div>
 
-        <!-- la grille des cartes recettes (remplie par js/cards.js) -->
+        <!-- grille des cartes recettes, remplie par js/cards.js -->
         <div class="recettes" id="recettes"></div>
 
-        <!-- message affiche quand aucune recette ne correspond -->
+        <!-- message du scenario A1 : l'attribut hidden le cache, le JS l'enleve quand aucune recette ne correspond -->
         <p class="aucun-resultat" id="aucun-resultat" hidden></p>
 
     </main>
 
-    <!-- les donnees des 50 recettes (variable globale "recipes") -->
+    <!-- Scripts en fin de body : le HTML est deja charge quand ils s'executent.
+         L'ordre compte : d'abord les donnees, puis les fonctions, et index.js en dernier
+         car c'est lui qui appelle toutes les autres fonctions.
+         Ce sont des scripts classiques : ils partagent les memes variables globales. -->
     <script src="PetitsPlats2.0-main/PetitsPlats2.0-main/recipes.js"></script>
-    <!-- mon code, decoupe par responsabilite -->
     <script src="js/utils.js"></script>
     <script src="js/filtres.js"></script>
     <script src="js/tags.js"></script>

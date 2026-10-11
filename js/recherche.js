@@ -1,11 +1,13 @@
-// Recherche principale : filtre les recettes sur le titre, les ingredients et la description.
-// Toute la logique de recherche est dans rechercherPrincipal() : c'est la SEULE fonction
-// qui changera entre la branche "boucles" et la branche "fonctionnel".
+// Moteur de recherche : la barre principale + le filtrage croise avec les tags.
+// rechercherPrincipal() est la SEULE fonction qui change entre les 2 branches Git
+// (fonctionnel / boucles) : c'est elle qu'on a comparee avec Jsben.ch.
 
-// Version programmation fonctionnelle (filter / some / includes).
-// Renvoie les recettes qui contiennent le texte cherche.
+// --- Version programmation fonctionnelle (branches main et recherche-fonctionnelle) ---
+// Renvoie les recettes dont le titre, la description OU un ingredient contient le texte.
+// filter() garde les recettes pour lesquelles la fonction renvoie true ;
+// some() s'arrete des qu'un ingredient correspond (inutile de tester les suivants).
 function rechercherPrincipal(recettes, texte) {
-    const recherche = texte.toLowerCase();
+    const recherche = texte.toLowerCase(); // on compare tout en minuscules
 
     return recettes.filter(recette => {
         const dansTitre = recette.name.toLowerCase().includes(recherche);
@@ -17,7 +19,8 @@ function rechercherPrincipal(recettes, texte) {
     });
 }
 
-// Etat courant de la recherche : le texte tape + les tags choisis dans chaque menu.
+// Etat de la recherche : le texte tape + les tags choisis, classes par categorie.
+// Les menus (filtres.js) le remplissent, appliquerFiltres() le lit.
 const etatRecherche = {
     texte: '',
     ingredients: [],
@@ -25,8 +28,9 @@ const etatRecherche = {
     ustensiles: []
 };
 
-// Une petite fonction par categorie : un tag n'est cherche QUE dans sa categorie.
-// (avant, "Saladier" choisi dans Appareils remontait aussi les recettes ou c'est un ustensile)
+// Une fonction par categorie : un tag n'est cherche QUE dans sa categorie
+// ("Saladier" existe a la fois comme appareil et comme ustensile dans les donnees).
+// Comparaison exacte (===) : un tag vient d'une liste, il doit correspondre a un element entier.
 function aIngredient(recette, tag) {
     const t = tag.toLowerCase();
     return recette.ingredients.some(item => item.ingredient.toLowerCase() === t);
@@ -41,7 +45,8 @@ function aUstensile(recette, tag) {
     return recette.ustensils.some(u => u.toLowerCase() === t);
 }
 
-// Garde les recettes qui ont TOUS les tags choisis (intersection).
+// Garde les recettes qui ont TOUS les tags choisis (regle 6 : intersection).
+// every() = "tous" ; avec some() ("au moins un") on obtiendrait une union.
 // every() sur une liste vide renvoie true : sans tag, toutes les recettes passent.
 function filtrerParTags(recettes) {
     return recettes.filter(recette =>
@@ -51,23 +56,24 @@ function filtrerParTags(recettes) {
     );
 }
 
-// Applique la recherche principale ET les tags, puis rafraichit l'affichage.
+// Le coeur du moteur, appele a chaque frappe et a chaque ajout/retrait de tag :
+// 1) recherche principale, 2) tags, 3) cartes, 4) menus, 5) message si aucun resultat.
 function appliquerFiltres() {
-    cacherMessage();
+    cacherMessage(); // on repart d'un etat propre a chaque fois
 
     let resultats = recipes;
 
-    // recherche principale : seulement a partir de 3 caracteres
+    // regle 2 : la recherche principale ne demarre qu'a partir de 3 caracteres
     if (etatRecherche.texte.length >= 3) {
         resultats = rechercherPrincipal(resultats, etatRecherche.texte);
     }
 
-    // filtrage par les tags choisis
+    // on filtre ensuite par les tags : on garde ce qui respecte la recherche ET les tags
     resultats = filtrerParTags(resultats);
 
     afficherRecettes(resultats);
 
-    // les menus ne proposent que les elements des recettes affichees
+    // regle 5 : les menus ne proposent que les elements des recettes affichees
     mettreAJourMenus(resultats);
 
     if (resultats.length === 0) {
@@ -75,15 +81,15 @@ function appliquerFiltres() {
     }
 }
 
-// Affiche le message "aucune recette" en reprenant le texte cherche.
+// Affiche le message du scenario A1 en reprenant le texte tape.
+// Securite : textContent, donc si on tape une balise HTML elle s'affiche comme du texte.
 function afficherMessageAucun(texte) {
     const message = document.getElementById('aucun-resultat');
-    // le texte tape est insere via textContent : aucune balise HTML ne peut etre injectee
     message.textContent = 'Aucune recette ne contient « ' + texte + ' », vous pouvez chercher « tarte aux pommes », « poisson », etc.';
     message.hidden = false;
 }
 
-// Cache le message.
+// Cache le message (attribut HTML hidden).
 function cacherMessage() {
     document.getElementById('aucun-resultat').hidden = true;
 }
@@ -94,6 +100,8 @@ function activerRecherchePrincipale() {
     const champ = document.querySelector('.search__input');
     const boutonClear = document.querySelector('.search__clear');
 
+    // regle 3 : l'evenement "input" se declenche a chaque caractere tape ou efface.
+    // trim() enleve les espaces au debut et a la fin ("  co" ne compte pas pour 3 caracteres).
     champ.addEventListener('input', () => {
         etatRecherche.texte = champ.value.trim();
         appliquerFiltres();
@@ -106,6 +114,6 @@ function activerRecherchePrincipale() {
         appliquerFiltres();
     });
 
-    // on empeche le rechargement de la page quand on appuie sur Entree
+    // Entree : la recherche se fait deja en direct, on empeche juste le rechargement de la page
     form.addEventListener('submit', event => event.preventDefault());
 }
