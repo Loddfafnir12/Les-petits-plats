@@ -1,0 +1,3 @@
+# fichiers systeme a ne pas envoyer sur GitHub
+.DS_Store
+Thumbs.db

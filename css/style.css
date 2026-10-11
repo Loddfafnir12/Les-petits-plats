@@ -1,4 +1,13 @@
-/* Couleurs du projet */
+/* ==========================================================
+   Les Petits Plats - feuille de style
+   Ordre : variables > reset > header > barre de recherche > filtres
+   > tags > menus > cartes > responsive.
+   Nommage BEM : .bloc__element (ex : .card__title = titre d'une carte).
+   Responsive "desktop first" : les media queries (max-width)
+   adaptent la page quand l'ecran devient plus petit.
+   ========================================================== */
+
+/* Couleurs en variables : on les modifie a un seul endroit */
 :root {
     --jaune: #FFD15B;
     --fond: #EDEDED;
@@ -7,7 +16,8 @@
     --gris: #7A7A7A;
 }
 
-/* petit reset de base */
+/* Reset : on enleve les marges par defaut des navigateurs.
+   border-box : le padding et la bordure sont inclus dans la largeur */
 * {
     margin: 0;
     padding: 0;
@@ -15,49 +25,52 @@
 }
 
 body {
-    font-family: 'Manrope', Arial, sans-serif;
+    font-family: 'Manrope', Arial, sans-serif; /* Arial si la police Google ne charge pas */
     background-color: var(--fond);
     color: var(--noir);
 }
 
 /* ---------- En-tete ---------- */
 .header {
-    /* la photo de fond avec un voile sombre par dessus pour bien lire le texte */
+    /* 2 fonds superposes : un voile noir a 40 % par-dessus la photo,
+       pour que le titre jaune reste lisible */
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("../src/Header.jpg");
-    background-size: cover;
+    background-size: cover; /* la photo couvre toute la zone sans se deformer */
     background-position: center;
     padding: 35px 50px 60px;
 }
 
 .header__logo {
     height: 24px;
-    width: auto;
+    width: auto; /* garde les proportions du logo */
 }
 
+/* bloc centre qui contient le titre et la barre de recherche */
 .header__hero {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 0 auto; /* centrage horizontal */
     padding-top: 75px;
     text-align: center;
 }
 
 .header__title {
-    max-width: 850px;
+    max-width: 850px; /* le titre passe sur 2 lignes, comme la maquette */
     margin: 0 auto;
     font-family: 'Anton', sans-serif;
     font-weight: 400;
     font-size: 44px;
     line-height: 1.35;
-    text-transform: uppercase;
+    text-transform: uppercase; /* majuscules en CSS : le texte HTML reste normal */
     color: var(--jaune);
 }
 
 /* ---------- Barre de recherche ---------- */
+/* flex : champ, croix et loupe sur une ligne, centres verticalement */
 .search {
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 954px;
+    max-width: 954px; /* largeur de la maquette */
     height: 72px;
     margin: 35px auto 0;
     padding-left: 25px;
@@ -67,10 +80,10 @@ body {
 }
 
 .search__input {
-    flex: 1;
+    flex: 1; /* le champ prend toute la place restante */
     height: 100%;
     border: none;
-    outline: none;
+    outline: none; /* remplace par le lisere jaune de :focus-within */
     font-family: 'Manrope', sans-serif;
     font-size: 16px;
     color: var(--noir);
@@ -80,7 +93,7 @@ body {
     color: #b0b0b0;
 }
 
-/* petit lisere quand la barre est selectionnee */
+/* :focus-within = la barre s'active quand un de ses enfants (le champ) a le focus */
 .search:focus-within {
     box-shadow: 0 0 0 2px var(--jaune);
 }
@@ -99,12 +112,14 @@ body {
     cursor: pointer;
 }
 
-/* on l'affiche seulement quand le champ contient du texte
-   (placeholder-shown = champ vide, donc :not(...) = champ rempli) */
+/* Affiche la croix SANS JS des que le champ contient du texte :
+   :placeholder-shown = placeholder visible = champ vide, :not() inverse => champ rempli.
+   "~" cible la croix placee apres le champ dans le HTML. */
 .search__input:not(:placeholder-shown) ~ .search__clear {
     display: flex;
 }
 
+/* bouton loupe noir */
 .search__btn {
     display: flex;
     align-items: center;
@@ -118,13 +133,14 @@ body {
     cursor: pointer;
 }
 
-/* au survol le bouton passe en jaune (comme dans Loop CTA.png) */
+/* au survol, le bouton passe en jaune (maquette "Loop CTA") */
 .search__btn:hover {
     background-color: var(--jaune);
     color: var(--noir);
 }
 
 /* ---------- Contenu principal ---------- */
+/* largeur maximale + centrage : sur un grand ecran le contenu ne s'etale pas */
 .container {
     max-width: 1300px;
     margin: 0 auto;
@@ -132,6 +148,7 @@ body {
 }
 
 /* ---------- Barre de filtres ---------- */
+/* les 3 menus a gauche, le compteur de recettes a droite */
 .filters {
     display: flex;
     align-items: center;
@@ -140,11 +157,11 @@ body {
 
 .filters__dropdowns {
     display: flex;
-    gap: 20px;
+    gap: 20px; /* espace entre les menus */
 }
 
 .filters__count {
-    margin-left: auto;
+    margin-left: auto; /* pousse le compteur tout a droite */
     font-family: 'Anton', sans-serif;
     font-size: 21px;
 }
@@ -152,21 +169,23 @@ body {
 /* ---------- Tags des filtres selectionnes ---------- */
 .tags {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* les tags passent a la ligne quand il n'y a plus de place */
     gap: 18px;
     padding-bottom: 20px;
 }
 
+/* un tag = le texte + la croix, sur fond jaune */
 .tag {
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 40px; /* espace entre le texte et la croix */
     padding: 16px 18px;
     background-color: var(--jaune);
     border-radius: 10px;
     font-size: 14px;
 }
 
+/* croix du tag : un bouton sans le style par defaut du navigateur */
 .tag__remove {
     padding: 0;
     border: none;
@@ -177,13 +196,15 @@ body {
     cursor: pointer;
 }
 
-/* ---------- Menu deroulant (balise native <details>, donc pas de JS) ---------- */
+/* ---------- Menus deroulants ----------
+   Chaque menu est un <details> : il s'ouvre et se ferme au clic sur <summary>
+   sans JavaScript, et le navigateur lui ajoute l'attribut [open] quand il est ouvert. */
 .dropdown {
-    position: relative;
+    position: relative; /* point de repere pour placer le panneau en absolute */
     width: 220px;
 }
 
-/* le bouton du menu */
+/* le bouton du menu (texte + fleche) */
 .dropdown__summary {
     display: flex;
     align-items: center;
@@ -193,15 +214,15 @@ body {
     border-radius: 11px;
     font-size: 18px;
     cursor: pointer;
-    list-style: none; /* enleve la petite fleche par defaut de <summary> */
+    list-style: none; /* enleve le petit triangle par defaut de <summary> */
 }
 
-/* quand le menu est ouvert, on arrondit seulement les coins du haut */
+/* menu ouvert : seuls les coins du haut restent arrondis (le panneau se colle dessous) */
 .dropdown[open] .dropdown__summary {
     border-radius: 11px 11px 0 0;
 }
 
-/* la fleche pointe vers le bas, et se retourne quand c'est ouvert */
+/* la fleche tourne de 180 degres a l'ouverture, avec une petite animation */
 .dropdown__chevron {
     transition: transform 0.2s;
 }
@@ -210,15 +231,16 @@ body {
     transform: rotate(180deg);
 }
 
-/* le panneau qui s'ouvre sous le bouton, par dessus le reste de la page.
-   cache par defaut, on l'affiche seulement quand <details> a l'attribut "open" */
+/* Le panneau (recherche + liste) sous le bouton.
+   absolute + z-index : il passe PAR-DESSUS les cartes au lieu de les pousser.
+   Cache par defaut, affiche seulement quand le menu a l'attribut [open]. */
 .dropdown__panel {
     display: none;
     position: absolute;
-    top: 100%;
+    top: 100%; /* juste sous le bouton */
     left: 0;
     width: 100%;
-    padding: 14px 0 8px; /* pas de padding gauche/droite : le survol des items va bord a bord */
+    padding: 14px 0 8px; /* pas de padding sur les cotes : le survol jaune va bord a bord */
     background-color: var(--blanc);
     border-radius: 0 0 11px 11px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -230,7 +252,7 @@ body {
     display: block;
 }
 
-/* la petite recherche a l'interieur du menu (inset, pour laisser les items aller bord a bord) */
+/* le petit champ de recherche du menu (lui garde des marges sur les cotes) */
 .dropdown__search {
     display: flex;
     align-items: center;
@@ -242,14 +264,14 @@ body {
 
 .dropdown__input {
     flex: 1;
-    min-width: 0;
+    min-width: 0; /* evite que le champ deborde quand le menu est etroit */
     border: none;
     outline: none;
     font-family: 'Manrope', sans-serif;
     font-size: 14px;
 }
 
-/* croix pour vider la recherche du menu : cachee tant que le champ est vide */
+/* croix grise du menu : meme astuce :placeholder-shown que la barre principale */
 .dropdown__clear {
     display: none;
     align-items: center;
@@ -262,28 +284,27 @@ body {
     cursor: pointer;
 }
 
-/* on l'affiche seulement quand le champ contient du texte */
 .dropdown__input:not(:placeholder-shown) ~ .dropdown__clear {
     display: flex;
 }
 
-/* loupe fine grise (Group 4.svg), devenue un bouton cliquable */
+/* la loupe (Group 4.svg) est un bouton submit : un clic ajoute le 1er mot-cle */
 .dropdown__loupe {
     display: flex;
-    flex-shrink: 0;
+    flex-shrink: 0; /* la loupe ne se fait jamais ecraser */
     padding: 0;
     border: none;
     background: none;
-    color: #7A7A7A;
+    color: #7A7A7A; /* le SVG utilise currentColor : il prend cette couleur */
     cursor: pointer;
 }
 
-/* la liste des options : on peut scroller mais la barre est cachee */
+/* liste des mots-cles : hauteur limitee, on peut defiler mais la barre est cachee */
 .dropdown__list {
     max-height: 200px;
     overflow-y: auto;
     list-style: none;
-    scrollbar-width: none; /* cache la barre de defilement */
+    scrollbar-width: none; /* propriete standard qui cache la barre de defilement */
 }
 
 .dropdown__list li {
@@ -292,12 +313,12 @@ body {
     cursor: pointer;
 }
 
-/* survol d'une option : fond jaune sur toute la largeur du menu */
+/* survol d'un mot-cle : fond jaune sur toute la largeur du menu */
 .dropdown__list li:hover {
     background-color: var(--jaune);
 }
 
-/* option choisie : on garde le jaune, le texte passe en gras + une croix pour la retirer (cf li-item.png) */
+/* mot-cle choisi (classe ajoutee par le JS) : jaune + gras + croix a droite (cf li-item.png) */
 .dropdown__list li.is-selected {
     display: flex;
     align-items: center;
@@ -306,7 +327,7 @@ body {
     font-weight: 700;
 }
 
-/* petit rond noir avec une croix blanche */
+/* croix d'un mot-cle choisi : un rond noir (border-radius 50 %) avec un x blanc */
 .dropdown__remove {
     display: flex;
     align-items: center;
@@ -325,6 +346,7 @@ body {
 }
 
 /* ---------- Grille des recettes ---------- */
+/* grid : 3 colonnes de meme largeur (1fr = une part egale de l'espace disponible) */
 .recettes {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -334,29 +356,29 @@ body {
 
 /* ---------- Carte d'une recette ---------- */
 .card {
-    height: 731px;
-    overflow: hidden;
+    height: 731px; /* hauteur fixe de la maquette : toutes les cartes s'alignent */
+    overflow: hidden; /* la photo suit les coins arrondis de la carte */
     background-color: var(--blanc);
     border-radius: 21px;
-    box-shadow: 0 4px 34px 30px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 34px 30px rgba(0, 0, 0, 0.04); /* ombre tres douce de la maquette */
 }
 
-/* zone de l'image (le gris sert de fond le temps que la photo charge) */
+/* zone de l'image : repere du badge (relative) ; le gris se voit pendant le chargement */
 .card__image {
     position: relative;
     height: 253px;
     background-color: #e5e5e5;
 }
 
-/* la photo de la recette remplit la zone sans se deformer */
+/* object-fit: cover : la photo remplit la zone sans etre deformee (elle est recadree) */
 .card__photo {
-    display: block;
+    display: block; /* enleve le petit espace blanc sous une image */
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* badge du temps de preparation, en haut a droite */
+/* badge du temps, place en haut a droite de l'image */
 .card__time {
     position: absolute;
     top: 20px;
@@ -377,7 +399,7 @@ body {
     font-weight: 700;
 }
 
-/* les petits intitules gris "RECETTE" et "INGREDIENTS" */
+/* intitules "RECETTE" et "INGREDIENTS" : petits, gris, majuscules espacees */
 .card__label {
     margin-bottom: 10px;
     color: var(--gris);
@@ -391,10 +413,10 @@ body {
     margin-bottom: 20px;
     color: #565656;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.5; /* interligne pour une lecture confortable */
 }
 
-/* la liste des ingredients sur 2 colonnes */
+/* ingredients sur 2 colonnes, comme la maquette */
 .card__ingredients {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -402,6 +424,7 @@ body {
     list-style: none;
 }
 
+/* display: block -> le nom et la quantite s'affichent l'un sous l'autre */
 .card__ing-name {
     display: block;
     font-size: 14px;
@@ -413,15 +436,17 @@ body {
     font-size: 14px;
 }
 
-/* message quand aucune recette ne correspond a la recherche */
+/* message "Aucune recette ne contient..." (cache par l'attribut hidden s'il y a des resultats) */
 .aucun-resultat {
     padding: 40px 0;
     font-size: 18px;
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Responsive ----------
+   Classees de la plus large a la plus petite : sous chaque largeur,
+   les regles du bloc s'ajoutent a celles des blocs precedents. */
 
-/* tablette : on passe la grille de recettes sur 2 colonnes */
+/* <= 1024px (tablette) : la grille passe sur 2 colonnes */
 @media (max-width: 1024px) {
     .recettes {
         grid-template-columns: repeat(2, 1fr);
@@ -429,7 +454,7 @@ body {
     }
 }
 
-/* tablette : on retrecit un peu les 3 menus pour qu'ils tiennent sur une seule ligne */
+/* <= 900px : on retrecit les 3 menus pour qu'ils tiennent encore sur une ligne */
 @media (max-width: 900px) {
     .dropdown {
         width: 190px;
@@ -440,7 +465,7 @@ body {
     }
 }
 
-/* petits ecrans : on reduit le header et on empile les filtres les uns sous les autres */
+/* <= 767px (petits ecrans) : header plus compact, filtres empiles en pleine largeur */
 @media (max-width: 767px) {
     .header {
         padding: 25px 20px 40px;
@@ -470,11 +495,11 @@ body {
     }
 
     .filters__count {
-        margin-left: 0;
+        margin-left: 0; /* le compteur revient a gauche, sous les menus */
     }
 }
 
-/* mobile : une seule colonne et un peu moins de marge sur les cotes */
+/* <= 640px (mobile) : une seule colonne de cartes et des marges plus petites */
 @media (max-width: 640px) {
     .container {
         padding: 0 20px;

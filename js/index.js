@@ -1,15 +1,17 @@
-// Point d'entree : on appelle ici les fonctions definies dans les autres fichiers.
+// Point d'entree de l'application. Ce fichier est charge en DERNIER (voir index.html) :
+// toutes les fonctions des autres fichiers existent deja, il ne fait que les appeler.
 
-// affiche toutes les recettes au chargement de la page
+// 1. au chargement, on affiche les 50 recettes
 afficherRecettes(recipes);
 
-// remplit les trois menus de filtres avec les donnees des recettes
+// 2. on remplit les 3 menus avec les elements de toutes les recettes (sans doublon, tries).
+//    Le 3e parametre dit dans quelle liste de etatRecherche ranger les tags choisis.
 configurerMenu('list-ingredients', nettoyer(ingredientsDe(recipes)), 'ingredients');
 configurerMenu('list-appliances', nettoyer(appareilsDe(recipes)), 'appareils');
 configurerMenu('list-ustensils', nettoyer(ustensilesDe(recipes)), 'ustensiles');
 
-// un seul menu ouvert a la fois
+// 3. un seul menu ouvert a la fois
 activerUnSeulMenuOuvert();
 
-// la barre de recherche principale du header
+// 4. on branche la barre de recherche principale
 activerRecherchePrincipale();

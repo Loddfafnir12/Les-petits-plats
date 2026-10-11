@@ -1,7 +1,10 @@
-// Tout le JavaScript lie aux menus de filtres (Ingredients / Appareils / Ustensiles).
-// "recipes" vient de recipes.js ; "majuscule" et "nettoyer" viennent de utils.js.
+// Menus de filtres avances : Ingredients / Appareils / Ustensiles.
+// Utilise "nettoyer" (utils.js), "creerTag" (tags.js), "etatRecherche" et "appliquerFiltres" (recherche.js).
 
-// recupere les ingredients d'une liste de recettes
+// --- Extraction des elements d'une liste de recettes ---
+// Ces 3 fonctions recoivent une liste de recettes (toutes, ou seulement celles affichees)
+// et renvoient tous les elements trouves, doublons compris (nettoyer() s'occupe du reste).
+
 function ingredientsDe(recettes) {
     const liste = [];
     recettes.forEach(recette => {
@@ -10,12 +13,10 @@ function ingredientsDe(recettes) {
     return liste;
 }
 
-// recupere les appareils d'une liste de recettes
 function appareilsDe(recettes) {
-    return recettes.map(recette => recette.appliance);
+    return recettes.map(recette => recette.appliance); // un seul appareil par recette
 }
 
-// recupere les ustensiles d'une liste de recettes
 function ustensilesDe(recettes) {
     const liste = [];
     recettes.forEach(recette => {
@@ -24,10 +25,13 @@ function ustensilesDe(recettes) {
     return liste;
 }
 
-// Liste des menus configures, pour pouvoir mettre a jour leurs listes apres un filtrage.
+// --- Mise a jour des menus apres une recherche (regle 5 du cas d'utilisation) ---
+
+// Chaque menu s'enregistre ici quand il est configure, pour qu'on puisse changer sa liste.
 const menusConfigures = [];
 
-// Met a jour les 3 menus : ils ne proposent que les elements presents dans les recettes donnees.
+// Les menus ne proposent plus que les elements presents dans les recettes affichees.
+// Appelee par appliquerFiltres() apres chaque recherche.
 function mettreAJourMenus(recettes) {
     menusConfigures.forEach(menu => {
         if (menu.type === 'ingredients') {
@@ -40,19 +44,25 @@ function mettreAJourMenus(recettes) {
     });
 }
 
-// Configure un menu : affiche les mots, gere la selection au clic et le filtrage par texte.
+// --- Configuration d'un menu ---
+// Une seule fonction pour les 3 menus (Green Code) : on lui donne l'id de la liste,
+// les mots a afficher et le type ("ingredients", "appareils" ou "ustensiles").
+// Les fonctions declarees a l'interieur gardent acces aux variables du menu (closure) :
+// chaque menu a donc SA propre selection, sans se melanger avec les autres.
 function configurerMenu(idListe, mots, type) {
+    // les elements HTML du menu, retrouves a partir de sa liste <ul>
     const ul = document.getElementById(idListe);
     const dropdown = ul.closest('.dropdown');
     const form = dropdown.querySelector('.dropdown__search');
     const champ = dropdown.querySelector('.dropdown__input');
     const boutonClear = dropdown.querySelector('.dropdown__clear');
 
-    const selection = []; // les mots choisis, dans l'ordre du clic
-    const tagsAffiches = {}; // pour retrouver le tag d'un mot et pouvoir l'enlever
-    let motsDisponibles = mots; // la liste affichee (se reduit apres un filtrage)
+    const selection = [];       // les mots choisis, dans l'ordre des clics
+    const tagsAffiches = {};    // mot -> son tag jaune, pour pouvoir le supprimer
+    let motsDisponibles = mots; // les mots proposes (la liste se reduit apres une recherche)
 
-    // cree un <li> pour un mot (selectionne = jaune + gras + une croix pour le retirer)
+    // Cree un <li> : soit un mot normal (clic = on l'ajoute),
+    // soit un mot choisi (fond jaune, gras, et une croix pour le retirer).
     function creerItem(mot, estChoisi) {
         const li = document.createElement('li');
         li.textContent = mot;
@@ -63,7 +73,7 @@ function configurerMenu(idListe, mots, type) {
             croix.type = 'button';
             croix.className = 'dropdown__remove';
             croix.setAttribute('aria-label', 'Retirer ' + mot);
-            croix.textContent = '×'; // le signe ×
+            croix.textContent = '×';
             croix.addEventListener('click', () => retirer(mot));
             li.appendChild(croix);
         } else {
@@ -72,42 +82,45 @@ function configurerMenu(idListe, mots, type) {
         return li;
     }
 
-    // (re)dessine la liste : les items choisis en haut, puis ceux qui correspondent a la recherche
+    // Redessine la liste : d'abord les mots choisis (en haut), puis les mots
+    // disponibles qui contiennent le texte tape dans le champ du menu.
     function afficher() {
-        ul.innerHTML = '';
+        ul.innerHTML = ''; // on vide la liste (chaine vide : aucun risque)
         const recherche = champ.value.toLowerCase();
 
         selection.forEach(mot => ul.appendChild(creerItem(mot, true)));
 
         motsDisponibles.forEach(mot => {
+            // pas de doublon avec les mots choisis + filtre sur la frappe (ex : "coco")
             if (!selection.includes(mot) && mot.toLowerCase().includes(recherche)) {
                 ul.appendChild(creerItem(mot, false));
             }
         });
     }
 
+    // Ajoute un mot : dans la selection du menu, dans l'etat de la recherche, en tag jaune,
+    // puis on relance le filtrage des recettes.
     function ajouter(mot) {
         if (!selection.includes(mot)) {
             selection.push(mot);
-            etatRecherche[type].push(mot); // on memorise le tag pour le filtrage
-            // on cree aussi le tag jaune sous la barre de recherche
-            tagsAffiches[mot] = creerTag(mot, () => retirer(mot));
-            appliquerFiltres(); // on met a jour les recettes affichees
+            etatRecherche[type].push(mot);
+            tagsAffiches[mot] = creerTag(mot, () => retirer(mot)); // la croix du tag appelle retirer()
+            appliquerFiltres();
         }
         afficher();
     }
 
+    // Retire un mot : l'inverse exact d'ajouter(). Appelee par la croix du menu OU
+    // par celle du tag, c'est ce qui garde les deux synchronises.
     function retirer(mot) {
         const i = selection.indexOf(mot);
         if (i !== -1) {
             selection.splice(i, 1);
         }
-        // on enleve le mot de l'etat de recherche
         const j = etatRecherche[type].indexOf(mot);
         if (j !== -1) {
             etatRecherche[type].splice(j, 1);
         }
-        // on enleve le tag correspondant
         if (tagsAffiches[mot]) {
             tagsAffiches[mot].remove();
             delete tagsAffiches[mot];
@@ -116,11 +129,12 @@ function configurerMenu(idListe, mots, type) {
         afficher();
     }
 
-    // Entree ou clic sur la loupe : on choisit le 1er mot-cle de la liste qui correspond a la frappe
+    // Entree ou loupe : ajoute le 1er mot de la liste qui correspond a la frappe
+    // (ex : "coco" + Entree -> "Crème de coco").
     function choisirPremier() {
         const recherche = champ.value.toLowerCase().trim();
         if (recherche === '') {
-            return;
+            return; // champ vide : rien a ajouter
         }
         const premier = motsDisponibles.find(mot =>
             !selection.includes(mot) && mot.toLowerCase().includes(recherche)
@@ -130,7 +144,9 @@ function configurerMenu(idListe, mots, type) {
         }
     }
 
-    // on filtre la liste a chaque lettre tapee
+    // --- Evenements du menu ---
+
+    // filtre la liste a chaque lettre tapee (etape 6 du cas d'utilisation)
     champ.addEventListener('input', afficher);
 
     // la croix grise vide le champ et reaffiche toute la liste
@@ -139,13 +155,14 @@ function configurerMenu(idListe, mots, type) {
         afficher();
     });
 
-    // Entree dans le champ ou clic sur la loupe : on ajoute le 1er mot-cle qui correspond
+    // Entree ou clic sur la loupe (bouton submit) : preventDefault() empeche
+    // le rechargement de la page, puis on ajoute le 1er mot qui correspond.
     form.addEventListener('submit', event => {
         event.preventDefault();
         choisirPremier();
     });
 
-    // on enregistre ce menu pour pouvoir mettre a jour sa liste apres un filtrage
+    // on enregistre ce menu : mettreAJourMenus() pourra remplacer sa liste de mots
     menusConfigures.push({
         type: type,
         mettreAJour: function (nouveauxMots) {
@@ -154,10 +171,11 @@ function configurerMenu(idListe, mots, type) {
         }
     });
 
-    afficher(); // premier affichage
+    afficher(); // premier affichage de la liste
 }
 
-// Un seul menu ouvert a la fois : quand on en ouvre un, on ferme les autres.
+// Un seul menu ouvert a la fois. Les menus sont des <details> : l'evenement "toggle"
+// se declenche a chaque ouverture/fermeture ; si un menu s'ouvre, on ferme les autres.
 function activerUnSeulMenuOuvert() {
     const menus = document.querySelectorAll('.dropdown');
     menus.forEach(menu => {

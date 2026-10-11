@@ -1,15 +1,15 @@
-// Tout le JavaScript lie aux cartes de recettes.
-// "recipes" vient de recipes.js ; "couper" et "creerElement" viennent de utils.js.
+// Affichage des recettes : creation des cartes et mise a jour de la grille.
+// Utilise "couper" et "creerElement" (utils.js).
 
-// cree la liste des ingredients d'une recette (nom + quantite), sur 2 colonnes
+// Cree la liste des ingredients d'une recette : le nom, et en dessous la quantite + l'unite.
 function creerListeIngredients(ingredients) {
-    const ul = creerElement('ul', 'card__ingredients');
+    const ul = creerElement('ul', 'card__ingredients'); // mise en 2 colonnes par le CSS
 
     ingredients.forEach(item => {
         const li = document.createElement('li');
         li.appendChild(creerElement('span', 'card__ing-name', item.ingredient));
 
-        // on colle la quantite et l'unite si elles existent
+        // quantite et unite sont facultatives dans les donnees (ex : les glacons n'en ont pas)
         let quantite = '';
         if (item.quantity) {
             quantite = item.quantity + (item.unit ? ' ' + item.unit : '');
@@ -22,22 +22,22 @@ function creerListeIngredients(ingredients) {
     return ul;
 }
 
-// cree la carte (un <article>) d'une recette.
-// Tout est insere via textContent / des proprietes : aucune balise HTML ne peut etre injectee.
+// Cree la carte (<article>) d'une recette, element par element.
+// Securite : jamais d'innerHTML avec les donnees -> aucune injection possible.
 function creerCarte(recette) {
     const article = creerElement('article', 'card');
 
-    // zone de l'image + badge du temps
+    // image + badge du temps de preparation
     const zoneImage = creerElement('div', 'card__image');
     const photo = creerElement('img', 'card__photo');
-    photo.src = 'JSON%20recipes/' + recette.image;
-    photo.alt = recette.name;
-    photo.loading = 'lazy';
+    photo.src = 'JSON%20recipes/' + recette.image; // %20 = l'espace du nom de dossier, encode
+    photo.alt = recette.name;                       // texte alternatif (accessibilite)
+    photo.loading = 'lazy';                         // la photo ne charge que quand on s'en approche
     zoneImage.appendChild(photo);
     zoneImage.appendChild(creerElement('span', 'card__time', recette.time + 'min'));
     article.appendChild(zoneImage);
 
-    // corps de la carte
+    // corps : titre, description coupee a 200 caracteres, puis les ingredients
     const corps = creerElement('div', 'card__body');
     corps.appendChild(creerElement('h2', 'card__title', recette.name));
     corps.appendChild(creerElement('p', 'card__label', 'Recette'));
@@ -49,13 +49,13 @@ function creerCarte(recette) {
     return article;
 }
 
-// affiche une liste de recettes dans la grille
+// Affiche une liste de recettes : vide la grille, cree une carte par recette,
+// puis met a jour le compteur "X recettes". Appelee a chaque recherche.
 function afficherRecettes(liste) {
     const grille = document.getElementById('recettes');
-    grille.innerHTML = '';
+    grille.innerHTML = ''; // on vide la grille (chaine vide : aucun risque)
     liste.forEach(recette => grille.appendChild(creerCarte(recette)));
 
-    // on met a jour le compteur a cote des filtres
     const compteur = document.querySelector('.filters__count');
     compteur.textContent = liste.length + (liste.length > 1 ? ' recettes' : ' recette');
 }
