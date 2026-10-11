@@ -48,7 +48,7 @@
     <main class="container">
 
         <!-- Barre de filtres : 3 menus deroulants + le nombre de recettes -->
-        <section class="filters">
+        <div class="filters">
             <div class="filters__dropdowns">
 
                 <!-- Menu Ingredients.
@@ -142,15 +142,15 @@
 
             </div>
 
-            <!-- le vrai nombre sera calcule par le JS plus tard -->
+            <!-- le nombre est mis a jour par le JS a chaque recherche (js/cards.js) -->
             <p class="filters__count">1500 recettes</p>
-        </section>
+        </div>
 
         <!-- les tags des filtres selectionnes -->
         <div class="tags" id="tags"></div>
 
         <!-- la grille des cartes recettes (remplie par js/cards.js) -->
-        <section class="recettes" id="recettes"></section>
+        <div class="recettes" id="recettes"></div>
 
         <!-- message affiche quand aucune recette ne correspond -->
         <p class="aucun-resultat" id="aucun-resultat" hidden></p>
