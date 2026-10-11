@@ -2,10 +2,11 @@
 // rechercherPrincipal() est la SEULE fonction qui change entre les 2 branches Git
 // (fonctionnel / boucles) : c'est elle qu'on a comparee avec Jsben.ch.
 
-// Version boucles natives (for).
-// Renvoie les recettes qui contiennent le texte cherche.
+// --- Version boucles natives (branche recherche-boucles) ---
+// Meme resultat que la version fonctionnelle, mais avec des boucles for :
+// on parcourt les recettes une par une et on garde celles qui correspondent.
 function rechercherPrincipal(recettes, texte) {
-    const recherche = texte.toLowerCase();
+    const recherche = texte.toLowerCase(); // on compare tout en minuscules
     const resultats = [];
 
     for (let i = 0; i < recettes.length; i++) {
@@ -18,7 +19,7 @@ function rechercherPrincipal(recettes, texte) {
             trouve = true;
         }
 
-        // sinon, dans la liste des ingredients
+        // sinon, dans les ingredients ; break arrete la boucle des qu'on a trouve
         if (!trouve) {
             for (let j = 0; j < recette.ingredients.length; j++) {
                 if (recette.ingredients[j].ingredient.toLowerCase().includes(recherche)) {
@@ -29,7 +30,7 @@ function rechercherPrincipal(recettes, texte) {
         }
 
         if (trouve) {
-            resultats.push(recette);
+            resultats.push(recette); // on ajoute la recette au tableau des resultats
         }
     }
 
