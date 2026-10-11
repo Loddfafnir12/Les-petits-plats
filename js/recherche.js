@@ -25,29 +25,29 @@ const etatRecherche = {
     ustensiles: []
 };
 
-// Renvoie true si la recette contient le mot-cle (dans ses ingredients, son appareil ou ses ustensiles).
-function recetteContientTag(recette, tag) {
+// Une petite fonction par categorie : un tag n'est cherche QUE dans sa categorie.
+// (avant, "Saladier" choisi dans Appareils remontait aussi les recettes ou c'est un ustensile)
+function aIngredient(recette, tag) {
     const t = tag.toLowerCase();
-    return recette.ingredients.some(item => item.ingredient.toLowerCase() === t)
-        || recette.appliance.toLowerCase() === t
-        || recette.ustensils.some(u => u.toLowerCase() === t);
+    return recette.ingredients.some(item => item.ingredient.toLowerCase() === t);
 }
 
-// Rassemble tous les tags choisis dans les trois menus.
-function tousLesTagsChoisis() {
-    return etatRecherche.ingredients
-        .concat(etatRecherche.appareils)
-        .concat(etatRecherche.ustensiles);
+function aAppareil(recette, tag) {
+    return recette.appliance.toLowerCase() === tag.toLowerCase();
 }
 
-// Garde les recettes qui correspondent aux tags choisis.
+function aUstensile(recette, tag) {
+    const t = tag.toLowerCase();
+    return recette.ustensils.some(u => u.toLowerCase() === t);
+}
+
+// Garde les recettes qui ont TOUS les tags choisis (intersection).
+// every() sur une liste vide renvoie true : sans tag, toutes les recettes passent.
 function filtrerParTags(recettes) {
-    const tags = tousLesTagsChoisis();
-    if (tags.length === 0) {
-        return recettes;
-    }
     return recettes.filter(recette =>
-        tags.every(tag => recetteContientTag(recette, tag))
+        etatRecherche.ingredients.every(tag => aIngredient(recette, tag))
+        && etatRecherche.appareils.every(tag => aAppareil(recette, tag))
+        && etatRecherche.ustensiles.every(tag => aUstensile(recette, tag))
     );
 }
 
